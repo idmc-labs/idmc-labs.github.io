@@ -43,7 +43,7 @@
         .leaflet-touch .leaflet-control-geocoder-icon,
         .leaflet-control-search .search-button,
          .leaflet-control-measure {
-            background-color: #2e2d2d !important;
+            background-color: #c4c4c4 !important;
             border-radius: 0px !important;
             color: #ffffff !important;
         }
