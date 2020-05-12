@@ -315,7 +315,7 @@
             pane: 'pane_IDU_CONFLICT_1',
             onEachFeature: pop_IDU_CONFLICT_1,
             pointToLayer: function (feature, latlng) {
-                if (feature.properties.displacement_type !== 'Conflict') { return false }
+                if (feature.properties.displacement_type !== 'Conflict'|| feature.properties.year !== 2020) { return false }
                 //if (feature.properties.time > sliderMin && feature.properties.time < sliderMax) { return false }
                 var context = {
                     feature: feature,
@@ -439,7 +439,7 @@
             onEachFeature: pop_IDU_DISASTERS_2,
             pointToLayer: function (feature, latlng) {
                 
-				if ((feature.properties.displacement_type !== 'Disaster')||(feature.properties.year === 2020)){ return false }
+				if (feature.properties.displacement_type !== 'Disaster'|| feature.properties.year !== 2020){ return false }
                 var context = {
                     feature: feature,
                     variables: {}
