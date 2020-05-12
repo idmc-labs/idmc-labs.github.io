@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>IDMC-IDU</title>
+		<meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <style>
+        #map {
+            width: 984px;
+            height: 600px;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="data/INFORM3_0.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#303030',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#303030',
+                fillOpacity: 1
+              });
+            }
+            //highlightLayer.openPopup();
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:2
+        }).fitBounds([[-177.7481227895895,-188.99999999999991],[171.38222344258963,188.99999999999997]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://www.internal-displacement.org/" target="_blank">IDMC</a> &middot; <a href="https://drmkc.jrc.ec.europa.eu/inform-index/INFORM-Epidemic" target="_blank">INFORM</a> &middot;<a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        function pop_INFORM3_0(feature, layer) {
+            layer.on({
+                click: function(e) {
+                  e.target.openPopup()
+                },
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                                    },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                                        <tr>\
+                        <td colspan="2"><strong>'+(feature.properties['IDMC_Name'] !== null ? autolinker.link(feature.properties['IDMC_Name'].toLocaleString()) : '') + '</strong>'+ '</td>\
+                    </tr>\
+                    <tr>\
+                        <td scope="row">COVID-19 risk class: ' + (feature.properties['Index_Cat'] !== null ? autolinker.link(feature.properties['Index_Cat'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+					<tr>\
+                        <th><sub>The INFORM COVID-19 Risk Index aims to identify: “countries at risk from health and humanitarian impacts of COVID-19 that could overwhelm current national response capacity, and therefore lead to a need for additional international assistance”.</sub></th>\
+                        <td></td>\
+                    </tr>\
+                            </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_INFORM3_0_0(feature) {
+            switch(String(feature.properties['Index_Cat'])) {
+                case 'Low':
+                    return {
+                pane: 'pane_INFORM3_0',
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,204,184,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Very Low':
+                    return {
+                pane: 'pane_INFORM3_0',
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,232,220,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Medium':
+                    return {
+                pane: 'pane_INFORM3_0',
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(252,143,111,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'High':
+                    return {
+                pane: 'pane_INFORM3_0',
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(244,59,39,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Very High':
+                    return {
+                pane: 'pane_INFORM3_0',
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(150,20,24,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'No data':
+                    return {
+                pane: 'pane_INFORM3_0',
+                opacity: 1,
+                color: 'rgba(247,247,247,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(203,203,203,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_INFORM3_0');
+        map.getPane('pane_INFORM3_0').style.zIndex = 400;
+        map.getPane('pane_INFORM3_0').style['mix-blend-mode'] = 'normal';
+        var layer_INFORM3_0 = new L.geoJson(json_INFORM3_0, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_INFORM3_0',
+            layerName: 'layer_INFORM3_0',
+            pane: 'pane_INFORM3_0',
+            onEachFeature: pop_INFORM3_0,
+            style: style_INFORM3_0_0,
+        });
+        bounds_group.addLayer(layer_INFORM3_0);
+        map.addLayer(layer_INFORM3_0);
+        function pop_IDU_CONFLICT_1(feature, layer) {
+            layer.on({
+                click: function(e) {
+                  e.target.openPopup()
+                },
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    //if (typeof layer.closePopup == 'function') {
+                    //    layer.closePopup();
+                    //} else {
+                    //    layer.eachLayer(function(feature){
+                    //        feature.closePopup()
+                    //    });
+                    //}
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['standard_p'] !== null ? autolinker.link(feature.properties['standard_p'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+        function style_IDU_CONFLICT_1_0(feature) {
+            var context = {
+                feature: feature,
+                variables: {}
+            };
+            // Start of if blocks and style check logic
+            if (exp_IDU_CONFLICT_1rule0_eval_expression(context)) {
+                  return {
+                pane: 'pane_IDU_CONFLICT_1',
+                radius: 2.0,
+                opacity: 0.5,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,127,0,1.0)',
+                interactive: true,
+            };
+                }
+                else if (exp_IDU_CONFLICT_1rule1_eval_expression(context)) {
+                  return {
+                pane: 'pane_IDU_CONFLICT_1',
+                radius: 4.0,
+                opacity: 0.5,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,127,0,1.0)',
+                interactive: true,
+            };
+                }
+                else if (exp_IDU_CONFLICT_1rule2_eval_expression(context)) {
+                  return {
+                pane: 'pane_IDU_CONFLICT_1',
+                radius: 6.0,
+                opacity: 0.5,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,127,0,1.0)',
+                interactive: true,
+            };
+                }
+                else if (exp_IDU_CONFLICT_1rule3_eval_expression(context)) {
+                  return {
+                pane: 'pane_IDU_CONFLICT_1',
+                radius: 10.0,
+                opacity: 0.5,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,127,0,1.0)',
+                interactive: true,
+            };
+                }
+            else {
+                return {fill: false, stroke: false};
+            }
+        }
+        map.createPane('pane_IDU_CONFLICT_1');
+        map.getPane('pane_IDU_CONFLICT_1').style.zIndex = 401;
+        map.getPane('pane_IDU_CONFLICT_1').style['mix-blend-mode'] = 'normal';
+        //var layer_IDU_CONFLICT_1 = new L.geoJson(json_IDU_CONFLICT_1, {
+        var layer_IDU_CONFLICT_1 = new L.geoJson(null, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_IDU_CONFLICT_1',
+            layerName: 'layer_IDU_CONFLICT_1',
+            pane: 'pane_IDU_CONFLICT_1',
+            onEachFeature: pop_IDU_CONFLICT_1,
+            pointToLayer: function (feature, latlng) {
+                if (feature.properties.displaceme !== 'Conflict') { return false }
+                //if (feature.properties.time > sliderMin && feature.properties.time < sliderMax) { return false }
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_IDU_CONFLICT_1_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_IDU_CONFLICT_1);
+        map.addLayer(layer_IDU_CONFLICT_1);
+        function pop_IDU_DISASTERS_2(feature, layer) {
+            layer.on({
+                click: function(e) {
+                  e.target.openPopup()
+                },
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    //if (typeof layer.closePopup == 'function') {
+                    //    layer.closePopup();
+                    //} else {
+                    //    layer.eachLayer(function(feature){
+                    //        feature.closePopup()
+                    //    });
+                    //}
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                                <tr>\
+                        <td colspan="2">' + (feature.properties['standard_p'] !== null ? autolinker.link(feature.properties['standard_p'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+        function style_IDU_DISASTERS_2_0(feature) {
+            var context = {
+                feature: feature,
+                variables: {}
+            };
+            // Start of if blocks and style check logic
+            if (exp_IDU_DISASTERS_2rule0_eval_expression(context)) {
+                  return {
+                pane: 'pane_IDU_DISASTERS_2',
+                radius: 2.0,
+                opacity: 0.5,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(57,155,233,1.0)',
+                interactive: true,
+            };
+                }
+                else if (exp_IDU_DISASTERS_2rule1_eval_expression(context)) {
+                  return {
+                pane: 'pane_IDU_DISASTERS_2',
+                radius: 4.0,
+                opacity: 0.5,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(57,155,233,1.0)',
+                interactive: true,
+            };
+                }
+                else if (exp_IDU_DISASTERS_2rule2_eval_expression(context)) {
+                  return {
+                pane: 'pane_IDU_DISASTERS_2',
+                radius: 6.0,
+                opacity: 0.5,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(57,155,233,1.0)',
+                interactive: true,
+            };
+                }
+                else if (exp_IDU_DISASTERS_2rule3_eval_expression(context)) {
+                  return {
+                pane: 'pane_IDU_DISASTERS_2',
+                radius: 10.0,
+                opacity: 0.5,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(57,155,233,1.0)',
+                interactive: true,
+            };
+                }
+            else {
+                return {fill: false, stroke: false};
+            }
+        }
+        map.createPane('pane_IDU_DISASTERS_2');
+        map.getPane('pane_IDU_DISASTERS_2').style.zIndex = 402;
+        map.getPane('pane_IDU_DISASTERS_2').style['mix-blend-mode'] = 'normal';
+        //var layer_IDU_DISASTERS_2 = new L.geoJson(json_IDU_DISASTERS_2, {
+        var layer_IDU_DISASTERS_2 = new L.geoJson(null, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_IDU_DISASTERS_2',
+            layerName: 'layer_IDU_DISASTERS_2',
+            pane: 'pane_IDU_DISASTERS_2',
+            onEachFeature: pop_IDU_DISASTERS_2,
+            pointToLayer: function (feature, latlng) {
+                if (feature.properties.displaceme !== 'Disaster') { return false }
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_IDU_DISASTERS_2_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_IDU_DISASTERS_2);
+        map.addLayer(layer_IDU_DISASTERS_2);
+        var baseMaps = {};
+
+        //const sliderHtml = '<div class="slidecontainer"><input type="range" min="346356346365" max="345345345345" value="50" class="slider" id="myRange"></div>'
+
+        L.control.layers(baseMaps,{'New displacacements due to disasters<br /><table><tr><td style="text-align: center;"><img src="legend/IDU_DISASTERS_2_100orless0.png" /></td><td>100 or less</td></tr><tr><td style="text-align: center;"><img src="legend/IDU_DISASTERS_2_10110001.png" /></td><td>101- 1,000</td></tr><tr><td style="text-align: center;"><img src="legend/IDU_DISASTERS_2_1001100002.png" /></td><td>1,001 - 10,000</td></tr><tr><td style="text-align: center;"><img src="legend/IDU_DISASTERS_2_10000ormore3.png" /></td><td>10,000 or more</td></tr></table>': layer_IDU_DISASTERS_2,'New displacements due to conflict<br /><table><tr><td style="text-align: center;"><img src="legend/IDU_CONFLICT_1_100orless0.png" /></td><td>100 or less</td></tr><tr><td style="text-align: center;"><img src="legend/IDU_CONFLICT_1_10110001.png" /></td><td>101 - 1,000</td></tr><tr><td style="text-align: center;"><img src="legend/IDU_CONFLICT_1_1001100002.png" /></td><td>1,001 - 10,000</td></tr><tr><td style="text-align: center;"><img src="legend/IDU_CONFLICT_1_10000ormore3.png" /></td><td>10,000 or more</td></tr></table>': layer_IDU_CONFLICT_1,'INFORM vulnerability index<br /><table><tr><td style="text-align: center;"><img src="legend/INFORM3_0_Low0.png" /></td><td>Very Low</td></tr><tr><td style="text-align: center;"><img src="legend/INFORM3_0_VeryLow1.png" /></td><td>Low</td></tr><tr><td style="text-align: center;"><img src="legend/INFORM3_0_Medium2.png" /></td><td>Medium</td></tr><tr><td style="text-align: center;"><img src="legend/INFORM3_0_High3.png" /></td><td>High</td></tr><tr><td style="text-align: center;"><img src="legend/INFORM3_0_VeryHigh4.png" /></td><td>Very High</td></tr><tr><td style="text-align: center;"><img src="legend/INFORM3_0_Nodata5.png" /></td><td>No data</td></tr></table></td><td></td></tr></table>': layer_INFORM3_0,},{collapsed:false}).addTo(map);
+        setBounds();
+  
+
+
+        ///
+        function updateLayers() {
+          const url_comun = 'https://gist.githubusercontent.com/matemies/d7e41a6d03006cd955decde1d93fd356/raw/51de98426415786a469a7ae8be0d59293de62bdc/map.geojson'
+          
+          $.getJSON(url_comun, function(geojson) {
+            layer_IDU_CONFLICT_1.clearLayers()
+            layer_IDU_DISASTERS_2.clearLayers()
+
+            layer_IDU_CONFLICT_1.addData(geojson)
+            layer_IDU_DISASTERS_2.addData(geojson)
+          })
+        }
+        
+        updateLayers()
+        //const frequencySeconds = 1
+       // var intervalLayers = window.setInterval(updateLayers, frequencySeconds *1000);
+        ///
+
+        </script>
+    </body>
+</html>
