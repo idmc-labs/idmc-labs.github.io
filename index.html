@@ -33,7 +33,14 @@
         <script src="js/labels.js"></script>
         <script src="js/leaflet-search.js"></script>
         <script src="data/INFORM3_0.js"></script>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-55042921-2"></script>
         <script>
+ window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-55042921-2');
+
 
             var highlightLayer;
         function highlightFeature(e) {
